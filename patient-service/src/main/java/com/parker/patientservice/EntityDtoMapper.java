@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class EntityDtoMapper {
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
     public <E, D> E toEntity(D dto, Class<E> entityClass) {
         return modelMapper.map(dto, entityClass);

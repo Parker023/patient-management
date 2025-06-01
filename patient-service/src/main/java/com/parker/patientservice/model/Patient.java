@@ -8,12 +8,14 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.util.UUID;
 
+/**
+ * Mysql does not auto generate UUID but postgres does
+ */
 @Entity
 @Data
 public class Patient {
     @Id
-    @Column(columnDefinition = "CHAR(36)")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(length = 36)
     private UUID id;
 
     @NotNull
