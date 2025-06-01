@@ -1,8 +1,10 @@
 plugins {
 	id 'java'
+	id 'com.google.protobuf' version '0.9.5'  // use latest stable version
 	id 'org.springframework.boot' version '3.5.0'
 	id 'io.spring.dependency-management' version '1.1.7'
 }
+
 
 group = 'com.parker'
 version = '0.0.1-SNAPSHOT'
@@ -13,25 +15,47 @@ java {
 	}
 }
 
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
-}
-
 repositories {
 	mavenCentral()
 }
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	compileOnly 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	annotationProcessor 'org.projectlombok:lombok'
+
+	// gRPC dependencies
+	implementation 'io.grpc:grpc-netty-shaded:1.69.0'
+	implementation 'io.grpc:grpc-protobuf:1.69.0'
+	implementation 'io.grpc:grpc-stub:1.69.0'
+
+	// Java 9+ compatibility
+	compileOnly 'org.apache.tomcat:annotations-api:6.0.53'
+
+	implementation 'com.google.protobuf:protobuf-java:4.29.1'
+
+	// gRPC Spring Boot starter
+	implementation 'net.devh:grpc-spring-boot-starter:3.1.0.RELEASE'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
-tasks.named('test') {
-	useJUnitPlatform()
+protobuf {
+	protoc {
+		artifact = "com.google.protobuf:protoc:3.25.5"
+	}
+	plugins {
+		grpc {
+			artifact = "io.grpc:protoc-gen-grpc-java:1.68.1"
+		}
+	}
+	generateProtoTasks {
+		all().each { task ->
+			task.plugins {
+				grpc {}
+			}
+		}
+	}
+}
+
+bootJar {
+	archiveFileName = 'billing-service.jar'
 }
