@@ -3,6 +3,7 @@ package com.parker.patientservice.service;
 import com.parker.patientservice.EntityDtoMapper;
 import com.parker.patientservice.dto.PatientRequestDTO;
 import com.parker.patientservice.dto.PatientResponseDTO;
+import com.parker.patientservice.exception.EmailAlreadyExistsException;
 import com.parker.patientservice.model.Patient;
 import com.parker.patientservice.repository.PatientRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,10 @@ public class PatientService {
                 .toList();
     }
 
-    public PatientResponseDTO createPatient(PatientRequestDTO patientRequestDTO) {
+    public PatientResponseDTO createPatient(PatientRequestDTO patientRequestDTO) throws EmailAlreadyExistsException {
+        if(patientRepository.existsByEmail(patientRequestDTO.getEmail())) {
+            throw new EmailAlreadyExistsException("A patient with this email is already exists : "+ patientRequestDTO.getEmail());
+        }
         Patient patient = entityDtoMapper.toEntity(patientRequestDTO, Patient.class);
         generateIdAndSet(patient);
         setRegistrationDate(patient);

@@ -2,6 +2,7 @@ package com.parker.patientservice.controller;
 
 import com.parker.patientservice.dto.PatientRequestDTO;
 import com.parker.patientservice.dto.PatientResponseDTO;
+import com.parker.patientservice.exception.EmailAlreadyExistsException;
 import com.parker.patientservice.service.PatientService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ public class PatientController {
         return ResponseEntity.ok(allPatients);
     }
     @PostMapping("create")
-    public ResponseEntity<PatientResponseDTO> createPatient(@Valid @RequestBody PatientRequestDTO patientRequestDTO){
+    public ResponseEntity<PatientResponseDTO> createPatient(@Valid @RequestBody PatientRequestDTO patientRequestDTO) throws EmailAlreadyExistsException {
         PatientResponseDTO patientResponseDTO = patientService.createPatient(patientRequestDTO);
         return ResponseEntity.ok(patientResponseDTO);
     }
