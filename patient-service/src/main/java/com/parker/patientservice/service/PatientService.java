@@ -29,7 +29,7 @@ public class PatientService {
                 .toList();
     }
 
-    public PatientResponseDTO createPatient(PatientRequestDTO patientRequestDTO) throws EmailAlreadyExistsException {
+    public PatientResponseDTO createPatient(PatientRequestDTO patientRequestDTO) {
         if(patientRepository.existsByEmail(patientRequestDTO.getEmail())) {
             throw new EmailAlreadyExistsException("A patient with this email is already exists : "+ patientRequestDTO.getEmail());
         }
