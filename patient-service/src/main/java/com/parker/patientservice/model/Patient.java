@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -15,7 +17,8 @@ import java.util.UUID;
 @Data
 public class Patient {
     @Id
-    @Column(length = 36)
+    @Column(length = 36,nullable = false,unique = true)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     private UUID id;
 
     @NotNull

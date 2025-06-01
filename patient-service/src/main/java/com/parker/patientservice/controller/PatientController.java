@@ -10,20 +10,35 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/patient/")
 @RequiredArgsConstructor
 public class PatientController {
     private final PatientService patientService;
+
     @GetMapping("all")
-    public ResponseEntity<List<PatientResponseDTO>> getAllPatients(){
+    public ResponseEntity<List<PatientResponseDTO>> getAllPatients() {
         List<PatientResponseDTO> allPatients = patientService.getAllPatients();
         return ResponseEntity.ok(allPatients);
     }
+
     @PostMapping("create")
     public ResponseEntity<PatientResponseDTO> createPatient(@Valid @RequestBody PatientRequestDTO patientRequestDTO) {
         PatientResponseDTO patientResponseDTO = patientService.createPatient(patientRequestDTO);
         return ResponseEntity.ok(patientResponseDTO);
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity<PatientResponseDTO> updatePatient(@Valid @RequestBody PatientRequestDTO patientRequestDTO, @PathVariable UUID id) {
+        PatientResponseDTO patientResponseDTO = patientService.updatePatient(patientRequestDTO, id);
+        return ResponseEntity.ok().body(patientResponseDTO);
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<Void> deletePatient(@PathVariable UUID id) {
+        patientService.deletePatient(id);
+        return ResponseEntity.noContent().build();
     }
 }

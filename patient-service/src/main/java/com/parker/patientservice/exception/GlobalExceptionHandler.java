@@ -22,9 +22,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(value = EmailAlreadyExistsException.class)
+    @ExceptionHandler(EmailAlreadyExistsException.class)
     public ResponseEntity<Map<String, String>> handleEmailAlreadyExistsException(EmailAlreadyExistsException exception) {
-        log.error("Email already exists exception !");
+        Map<String, String> errors = new HashMap<>();
+        errors.put("message", exception.getMessage());
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(value = PatientNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handlePatientNotFoundException(PatientNotFoundException exception) {
+        log.error("patient with ID not exists exception !");
         Map<String, String> errors = new HashMap<>();
         errors.put("message", exception.getMessage());
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
