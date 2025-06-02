@@ -1,4 +1,4 @@
-package com.parker.patientservice;
+package com.parker.patientservice.mapper;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
