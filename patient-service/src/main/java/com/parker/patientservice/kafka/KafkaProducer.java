@@ -23,7 +23,7 @@ public class KafkaProducer {
         try {
             kafkaTemplate.send("patient", patientEvent.toByteArray());
         } catch (Exception e) {
-            log.error("Error sending event to kafka : {}", patientEvent.toString());
+            log.error("Error sending event to kafka : {}", patientEvent);
         }
     }
 }
