@@ -2,6 +2,7 @@ package com.parker.patientservice.service;
 
 import billing.BillingResponse;
 import com.parker.patientservice.grpc.BillingServiceGrpcClient;
+import com.parker.patientservice.kafka.KafkaProducer;
 import com.parker.patientservice.mapper.EntityDtoMapper;
 import com.parker.patientservice.dto.PatientRequestDTO;
 import com.parker.patientservice.dto.PatientResponseDTO;
@@ -29,6 +30,7 @@ public class PatientService {
     private final EntityDtoMapper entityDtoMapper;
     private final BillingServiceGrpcClient billingServiceGrpcClient;
     private final PatientRepository patientRepository;
+    private final KafkaProducer kafkaProducer;
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -52,6 +54,8 @@ public class PatientService {
         entityManager.persist(patient);
         BillingResponse billingResponse = createBillingAccount(patient);
         log.info("Created billing account {} ", billingResponse.toString());
+        kafkaProducer.sendEvent(patient);
+
         return entityDtoMapper.toDto(patient, PatientResponseDTO.class);
     }
 

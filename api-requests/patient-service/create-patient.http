@@ -3,9 +3,9 @@ POST http://localhost:4000/api/v1/patient/create
 Content-Type: application/json
 
 {
-  "name": "anirudh",
-  "email": "amirudhshanmukha2399@gmail.com",
-  "address": "nellore",
+  "name": "Shanmukha",
+  "email": "shanmukha2399@gmail.com",
+  "address": "Bangalore",
   "dateOfBirth": "1999-11-23"
 }
 ###

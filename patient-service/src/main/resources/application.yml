@@ -5,6 +5,10 @@ spring:
     application:
         name: patient-service
         #uncomment to enable props for local testing using mysql
+    kafka:
+        producer:
+            key-serializer: org.apache.kafka.common.serialization.StringSerializer
+            value-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
 #    datasource:
 #        driver-class-name: com.mysql.cj.jdbc.Driver
 #        password: Optimus@2399
