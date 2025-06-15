@@ -8,15 +8,17 @@ import io.jsonwebtoken.security.SignatureException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.SecretKey;
+import java.security.Key;
 import java.util.Date;
 
 @Service
 public class JwtService {
 
-    private final String secret;
+    private final Key key;
 
     public JwtService(@Value("${jwt.secret}") String secret) {
-        this.secret = secret;
+        this.key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
 
@@ -26,13 +28,13 @@ public class JwtService {
                 .issuedAt(new Date())
                 .claim("role", role)
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
-                .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
+                .signWith(key)
                 .compact();
     }
 
     public void validateToken(String token) {
         try {
-            Jwts.parser().verifyWith(Keys.hmacShaKeyFor(secret.getBytes()))
+            Jwts.parser().verifyWith((SecretKey) key)
                     .build()
                     .parseSignedClaims(token);
         } catch (SignatureException e) {

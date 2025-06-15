@@ -1,5 +1,6 @@
 package com.parker.authservice.service;
 
+import com.github.f4b6a3.uuid.UuidCreator;
 import com.parker.authservice.dto.LoginRequest;
 import com.parker.authservice.dto.RegistrationRequest;
 import com.parker.authservice.mapper.EntityDtoMapper;
@@ -40,6 +41,7 @@ public class AuthService {
     public String registerUser(RegistrationRequest registrationRequest) {
         registrationRequest.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
         User user = entityDtoMapper.toEntity(registrationRequest, User.class);
+        user.setId(UuidCreator.getTimeBased());
         if (Objects.isNull(user.getRole())) {
             user.setRole("ROLE_USER");
         }
