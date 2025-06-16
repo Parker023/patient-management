@@ -3,6 +3,7 @@ package com.parker.authservice.service;
 import com.github.f4b6a3.uuid.UuidCreator;
 import com.parker.authservice.dto.LoginRequest;
 import com.parker.authservice.dto.RegistrationRequest;
+import com.parker.authservice.dto.UserDto;
 import com.parker.authservice.mapper.EntityDtoMapper;
 import com.parker.authservice.model.User;
 import io.jsonwebtoken.JwtException;
@@ -38,14 +39,14 @@ public class AuthService {
 
     }
 
-    public String registerUser(RegistrationRequest registrationRequest) {
+    public UserDto registerUser(RegistrationRequest registrationRequest) {
         registrationRequest.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
         User user = entityDtoMapper.toEntity(registrationRequest, User.class);
         user.setId(UuidCreator.getTimeBased());
         if (Objects.isNull(user.getRole())) {
             user.setRole("ROLE_USER");
         }
-        User savedUser = userService.save(user);
-        return jwtService.generateToken(new LoginRequest(savedUser.getEmail(), savedUser.getPassword()), user.getRole());
+         User savedUser=userService.save(user);
+        return  entityDtoMapper.toDto(savedUser,UserDto.class);
     }
 }

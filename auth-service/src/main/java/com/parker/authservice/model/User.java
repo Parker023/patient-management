@@ -4,28 +4,24 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
 @Data
 @Entity
-@Table(name = "USER_DETAILS")
-@EntityListeners(AuditingEntityListener.class)
+@Table(name = "USERS")
 public class User implements UserDetails {
     @Id
     @Column(length = 36, nullable = false, unique = true)
     @JdbcTypeCode(SqlTypes.VARCHAR)
     private UUID id;
-    @Column(length = 36, nullable = false, name = "USER_NAME")
+    @Column(length = 36, nullable = false, name = "name")
     private String name;
     @Column(nullable = false, length = 24, name = "PASSWORD")
     private String password;
@@ -33,12 +29,6 @@ public class User implements UserDetails {
     private String email;
     @Column(name = "ROLE")
     private String role;
-    @CreatedDate
-    @Column(updatable = false, nullable = false)
-    private LocalDate createdDate;
-    @LastModifiedDate()
-    @Column(nullable = false)
-    private LocalDate modifiedDate;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

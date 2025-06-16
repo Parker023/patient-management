@@ -1,0 +1,11 @@
+### registration request to register user and send login url
+POST http://localhost:4005/register
+Content-Type: application/json
+
+{
+  "name": "Shanmukha Anirudh",
+  "email": "amirudhshanmukha2399@gmai.com",
+  "password": "Optimus@2399",
+  "role": "ROLE_ADMIN"
+}
+###
