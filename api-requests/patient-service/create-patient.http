@@ -1,5 +1,5 @@
 ### POST request to create Patient
-POST http://localhost:4000/api/v1/patient/create
+POST http://lb-942f830e.elb.localhost.localstack.cloud:4000/api/v1/patient/create
 Content-Type: application/json
 
 {

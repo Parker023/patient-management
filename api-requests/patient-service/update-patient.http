@@ -1,5 +1,5 @@
 ### PUT request to update Patient
-PUT http://localhost:8080/api/v1/patient/13e256ac-bf34-4644-bf88-97a1c3ec9cc2
+PUT http://lb-942f830e.elb.localhost.localstack.cloud:8080/api/v1/patient/13e256ac-bf34-4644-bf88-97a1c3ec9cc2
 Content-Type: application/json
 
 {

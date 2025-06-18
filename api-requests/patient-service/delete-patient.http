@@ -1,4 +1,4 @@
 ### DELETE request to example server
-DELETE http://localhost:8080/api/v1/patient/123e4567-e89b-12d3-a456-426614174001
+DELETE http://lb-942f830e.elb.localhost.localstack.cloud:8080/api/v1/patient/123e4567-e89b-12d3-a456-426614174001
 
 ###
