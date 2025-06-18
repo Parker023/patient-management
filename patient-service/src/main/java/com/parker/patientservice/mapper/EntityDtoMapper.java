@@ -5,7 +5,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -23,12 +22,12 @@ public class EntityDtoMapper {
     public <D, T> List<D> mapToDtoList(List<T> entities, Class<D> dtoClass) {
         return entities.stream()
                 .map(entity -> modelMapper.map(entity, dtoClass))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public <T, D> List<T> mapToEntityList(List<D> dtos, Class<T> entityClass) {
         return dtos.stream()
                 .map(dto -> modelMapper.map(dto, entityClass))
-                .collect(Collectors.toList());
+                .toList();
     }
 }
