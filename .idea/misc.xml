@@ -8,6 +8,13 @@
     <file type="web" url="file://$PROJECT_DIR$/billing-service" />
     <file type="web" url="file://$PROJECT_DIR$/patient-service" />
   </component>
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/infrastructure/pom.xml" />
+      </list>
+    </option>
+  </component>
   <component name="ProjectRootManager">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
