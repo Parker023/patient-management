@@ -19,8 +19,8 @@ spring:
               uri: http://patient-service:4000
               predicates:
                 - Path=/api/v*/patient/**
-            #              filters:
-            #                - StripPrefix=1
+              filters:
+                - JwtValidation
 
             # Route for /api/docs/patients to patient-service /v3/api-docs
             - id: api-docs-patient-route
