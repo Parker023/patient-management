@@ -30,6 +30,7 @@ dependencies {
 	implementation 'io.grpc:grpc-stub:1.69.0'
 	implementation 'org.springframework.kafka:spring-kafka'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	testImplementation 'org.springframework.kafka:spring-kafka-test'
 	// Java 9+ compatibility
 	compileOnly 'org.apache.tomcat:annotations-api:6.0.53'

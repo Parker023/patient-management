@@ -9,7 +9,8 @@ import lombok.Getter;
 @Getter
 public enum PatientConstants {
     EMAIL("email"), SMS("sms"), OTP_TTL_SECONDS("300"), OTP("otp"),
-    OTP_VERIFIED("OTP Verified"), INVALID_OTP("Invalid OTP");
+    OTP_VERIFIED("OTP Verified"), INVALID_OTP("Invalid OTP"),
+    EMAIL_TEMPLATE("email-otp-template.txt");
     private final String value;
 
     PatientConstants(String value) {
