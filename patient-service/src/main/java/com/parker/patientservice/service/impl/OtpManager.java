@@ -1,6 +1,8 @@
 package com.parker.patientservice.service.impl;
 
 import com.parker.patientservice.constants.PatientConstants;
+import com.parker.patientservice.dto.OtpRequestDto;
+import com.parker.patientservice.dto.VerifyOtpDto;
 import com.parker.patientservice.service.OtpSenderFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,14 +24,17 @@ public class OtpManager {
     private final OtpSenderFactory senderFactory;
     private final RedisTemplate<String, String> otpSenderRedisTemplate;
 
-    public void generateAndSendOtp(String channel, String destination) {
+    public void generateAndSendOtp(String channel, OtpRequestDto otpRequestDto) {
         String otp = String.valueOf(ThreadLocalRandom.current().nextInt(100000, 999999));
-        String key = getOtpKey(channel, destination);
+        log.info("Sending OTP {} to channel {}", otp, channel);
+        String key = getOtpKey(channel, otpRequestDto.getEmail());
         otpSenderRedisTemplate.opsForValue().set(key, otp, Long.parseLong(PatientConstants.OTP_TTL_SECONDS.getValue()), TimeUnit.SECONDS);
-        senderFactory.getOtpSender(channel).sendOtp(destination, otp);
+        senderFactory.getOtpSender(channel).sendOtp(otpRequestDto.getEmail(), otp);
     }
 
-    public boolean verifyOtp(String channel, String destination, String submittedOtp) {
+    public boolean verifyOtp(String channel, VerifyOtpDto verifyOtpDto) {
+        String destination = verifyOtpDto.getEmail();
+        String submittedOtp = verifyOtpDto.getOtp();
         String key = getOtpKey(channel, destination);
         String storedOtp = otpSenderRedisTemplate.opsForValue().get(key);
         log.info("submittedOtp:{}", submittedOtp);
