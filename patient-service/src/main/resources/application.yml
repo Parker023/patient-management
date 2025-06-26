@@ -4,7 +4,7 @@ logging:
 spring:
     application:
         name: patient-service
-        #uncomment to enable props for local testing using mysql
+
     kafka:
         producer:
             key-serializer: org.apache.kafka.common.serialization.StringSerializer
@@ -24,6 +24,8 @@ spring:
                     auth: true
                     starttls:
                         enable: true
+
+    #uncomment to enable props for local testing using mysql
 #    datasource:
 #        driver-class-name: com.mysql.cj.jdbc.Driver
 #        password: Optimus@2399

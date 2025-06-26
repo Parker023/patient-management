@@ -1,5 +1,6 @@
 package com.parker.patientservice.exception;
 
+import com.parker.patientservice.constants.PatientConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,23 +16,33 @@ import java.util.Map;
 public class GlobalExceptionHandler {
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
+        log.info("handleMethodArgumentNotValidException");
         Map<String, String> errors = new HashMap<>();
         exception.getBindingResult().getFieldErrors().forEach(error ->
-            errors.put(error.getField(), error.getDefaultMessage()));
+                errors.put(error.getField(), error.getDefaultMessage()));
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(EmailAlreadyExistsException.class)
     public ResponseEntity<Map<String, String>> handleEmailAlreadyExistsException(EmailAlreadyExistsException exception) {
         Map<String, String> errors = new HashMap<>();
-        errors.put("message", exception.getMessage());
+        errors.put(PatientConstants.MESSAGE.getValue(), exception.getMessage());
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
+
     @ExceptionHandler(value = PatientNotFoundException.class)
     public ResponseEntity<Map<String, String>> handlePatientNotFoundException(PatientNotFoundException exception) {
         log.error("patient with ID not exists exception !");
         Map<String, String> errors = new HashMap<>();
-        errors.put("message", exception.getMessage());
+        errors.put(PatientConstants.MESSAGE.getValue(), exception.getMessage());
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = UnableToReadResourceException.class)
+    public ResponseEntity<Map<String, String>> unableToReadResourceException(UnableToReadResourceException exception) {
+        log.error("unable to read resource exception !!");
+        Map<String, String> errors = new HashMap<>();
+        errors.put(PatientConstants.MESSAGE.getValue(), exception.getMessage());
+        return new ResponseEntity<>(errors, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
