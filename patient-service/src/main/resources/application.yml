@@ -9,10 +9,6 @@ spring:
         producer:
             key-serializer: org.apache.kafka.common.serialization.StringSerializer
             value-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
-    data:
-        redis:
-            host: localhost
-            port: 6379
 
     #uncomment to enable props for local testing using mysql
 #    datasource:
