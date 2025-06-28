@@ -25,6 +25,7 @@ public class KafkaProducer {
                 .setEmail(registrationRequest.getEmail())
                 .setName(registrationRequest.getName())
                 .setGender(registrationRequest.getGender())
+                .setAddress(registrationRequest.getAddress())
                 .setDateOfBirth(registrationRequest.getDateOfBirth().format(DateTimeFormatter.ISO_DATE))
                 .build();
         try {

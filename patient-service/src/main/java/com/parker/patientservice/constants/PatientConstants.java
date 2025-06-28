@@ -8,7 +8,7 @@ import lombok.Getter;
  */
 @Getter
 public enum PatientConstants {
-    PATIENT("patient");
+    PATIENT("patient"), MESSAGE("message");
     private final String value;
 
 

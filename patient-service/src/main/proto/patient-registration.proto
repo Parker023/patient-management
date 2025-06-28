@@ -1,5 +1,5 @@
 syntax = "proto3";
-package auth.events;
+package patient.events;
 option java_multiple_files = true;
 
 message PatientRequest{

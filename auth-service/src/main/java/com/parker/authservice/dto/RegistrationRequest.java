@@ -23,4 +23,6 @@ public class RegistrationRequest {
     @Past(message = "Date of birth must be in the past")
     private LocalDate dateOfBirth;
     private String gender;
+
+    private String address;
 }
