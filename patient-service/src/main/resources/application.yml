@@ -9,6 +9,9 @@ spring:
         producer:
             key-serializer: org.apache.kafka.common.serialization.StringSerializer
             value-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
+        consumer:
+            key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+            value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
 
     #uncomment to enable props for local testing using mysql
 #    datasource:
