@@ -2,6 +2,8 @@ package com.parker.authservice.service.impl;
 
 import com.parker.authservice.constants.AuthConstants;
 import com.parker.authservice.dto.OtpRequestDto;
+import com.parker.authservice.dto.PendingRegistration;
+import com.parker.authservice.dto.RegistrationRequest;
 import com.parker.authservice.dto.VerifyOtpDto;
 import com.parker.authservice.service.OtpSenderFactory;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -22,30 +25,39 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class OtpManager {
     private final OtpSenderFactory senderFactory;
-    private final RedisTemplate<String, String> otpSenderRedisTemplate;
+    private final RedisTemplate<String, PendingRegistration> otpSenderRedisTemplate;
 
-    public void generateAndSendOtp(String channel, OtpRequestDto otpRequestDto) {
+
+    public void generateAndSendOtp(String channel, RegistrationRequest registrationRequest) {
         String otp = String.valueOf(ThreadLocalRandom.current().nextInt(100000, 999999));
         log.info("Sending OTP {} to channel {}", otp, channel);
-        String key = getOtpKey(channel, otpRequestDto.getEmail());
-        otpSenderRedisTemplate.opsForValue().set(key, otp, Long.parseLong(AuthConstants.OTP_TTL_SECONDS.getValue()), TimeUnit.SECONDS);
-        senderFactory.getOtpSender(channel).sendOtp(otpRequestDto.getEmail(), otp);
+        String key = getOtpKey(channel, registrationRequest.getEmail());
+        PendingRegistration registration = constructPendingRegistration(otp, registrationRequest);
+        otpSenderRedisTemplate.opsForValue().set(key, registration, 10, TimeUnit.SECONDS);
+        senderFactory.getOtpSender(channel).sendOtp(registrationRequest.getEmail(), otp);
     }
 
     public boolean verifyOtp(String channel, VerifyOtpDto verifyOtpDto) {
         String destination = verifyOtpDto.getEmail();
         String submittedOtp = verifyOtpDto.getOtp();
         String key = getOtpKey(channel, destination);
-        String storedOtp = otpSenderRedisTemplate.opsForValue().get(key);
-        log.info("submittedOtp:{}", submittedOtp);
-        if (Objects.nonNull(storedOtp) && storedOtp.equals(submittedOtp)) {
-            otpSenderRedisTemplate.delete(key);
-            return true;
+        PendingRegistration pendingRegistration = otpSenderRedisTemplate.opsForValue().get(key);
+        if (Objects.isNull(pendingRegistration)) {
+            return false;
         }
-        return false;
+        log.info("submittedOtp:{}", submittedOtp);
+        return Objects.nonNull(pendingRegistration.getOtp()) && pendingRegistration.getOtp().equals(submittedOtp);
     }
 
-    private String getOtpKey(String channel, String destination) {
-        return AuthConstants.OTP.getValue() + ":" + channel + ":" + destination;
+    public String getOtpKey(String channel, String destination) {
+        return AuthConstants.PENDING.getValue() + AuthConstants.COLON + channel + AuthConstants.COLON + destination;
+    }
+
+    private PendingRegistration constructPendingRegistration(String otp, RegistrationRequest request) {
+        return PendingRegistration.builder()
+                .registrationData(request)
+                .otp(otp)
+                .createdAt(LocalDateTime.now())
+                .build();
     }
 }

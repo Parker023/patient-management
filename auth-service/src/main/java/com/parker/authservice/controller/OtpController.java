@@ -3,6 +3,7 @@ package com.parker.authservice.controller;
 import com.parker.authservice.constants.AuthConstants;
 import com.parker.authservice.dto.OtpRequestDto;
 import com.parker.authservice.dto.VerifyOtpDto;
+import com.parker.authservice.service.AuthService;
 import com.parker.authservice.service.impl.OtpManager;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -22,17 +23,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/patient/otp/")
 @Tag(name = "Patient", description = "API for managing patients")
 public class OtpController {
-    private final OtpManager otpManager;
-
-    @PostMapping("send")
-    public ResponseEntity<String> sendOtp(@RequestBody OtpRequestDto otpRequestDto) {
-        otpManager.generateAndSendOtp(AuthConstants.EMAIL.getValue(), otpRequestDto);
-        return ResponseEntity.noContent().build();
-    }
-
+private final AuthService authService;
     @PostMapping("verify")
     public ResponseEntity<String> verifyOtp(@RequestBody VerifyOtpDto verifyOtpDto) {
-        boolean isVerified = otpManager.verifyOtp(AuthConstants.EMAIL.getValue(), verifyOtpDto);
+        boolean isVerified = authService.validateOtp(verifyOtpDto);
         String message = isVerified ? AuthConstants.OTP_VERIFIED.getValue() : AuthConstants.INVALID_OTP.getValue();
         return ResponseEntity.ok(message);
     }

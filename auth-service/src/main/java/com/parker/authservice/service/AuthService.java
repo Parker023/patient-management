@@ -1,13 +1,16 @@
 package com.parker.authservice.service;
 
 import com.github.f4b6a3.uuid.UuidCreator;
-import com.parker.authservice.dto.LoginRequest;
-import com.parker.authservice.dto.RegistrationRequest;
-import com.parker.authservice.dto.UserDto;
+import com.parker.authservice.constants.AuthConstants;
+import com.parker.authservice.dto.*;
+import com.parker.authservice.kafka.KafkaProducer;
 import com.parker.authservice.mapper.EntityDtoMapper;
 import com.parker.authservice.model.User;
+import com.parker.authservice.service.impl.OtpManager;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +19,15 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService {
     private final UserService userService;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final EntityDtoMapper entityDtoMapper;
+    private final OtpManager otpManager;
+    private final KafkaProducer kafkaProducer;
+    private final RedisTemplate<String, PendingRegistration> otpSenderRedisTemplate;
 
     public Optional<String> authenticate(LoginRequest loginRequest) {
         return userService.loadUserByUsername(loginRequest.getEmail())
@@ -41,12 +48,31 @@ public class AuthService {
 
     public UserDto registerUser(RegistrationRequest registrationRequest) {
         registrationRequest.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
-        User user = entityDtoMapper.toEntity(registrationRequest, User.class);
+        AuthRequest authRequest = entityDtoMapper.toDto(registrationRequest, AuthRequest.class);
+        User user = entityDtoMapper.toEntity(authRequest, User.class);
+
         user.setId(UuidCreator.getTimeBased());
         if (Objects.isNull(user.getRole())) {
             user.setRole("ROLE_USER");
         }
-         User savedUser=userService.save(user);
-        return  entityDtoMapper.toDto(savedUser,UserDto.class);
+        otpManager.generateAndSendOtp(AuthConstants.EMAIL.getValue(), registrationRequest);
+        User savedUser = userService.save(user);
+        return entityDtoMapper.toDto(savedUser, UserDto.class);
+    }
+
+    public boolean validateOtp(VerifyOtpDto verifyOtpDto) {
+        boolean isVerified = otpManager.verifyOtp(AuthConstants.EMAIL.getValue(), verifyOtpDto);
+        if (isVerified) {
+            String key = otpManager.getOtpKey(AuthConstants.EMAIL.getValue(), verifyOtpDto.getOtp());
+            PendingRegistration pendingRegistration = otpSenderRedisTemplate.opsForValue().get(key);
+            if (Objects.isNull(pendingRegistration)) {
+                return false;
+            } else {
+                log.info("Otp has been verified and deleting the message for redis !!!");
+                otpSenderRedisTemplate.delete(key);
+            }
+            kafkaProducer.sendToPatient(pendingRegistration.getRegistrationData());
+        }
+        return isVerified;
     }
 }

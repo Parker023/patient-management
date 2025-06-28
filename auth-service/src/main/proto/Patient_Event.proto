@@ -1,0 +1,11 @@
+syntax = "proto3";
+package auth.events;
+option java_multiple_files = true;
+
+message PatientRequest{
+  string name = 1;
+  string email = 2;
+  string dateOfBirth = 3;
+  string gender = 4;
+}
+
