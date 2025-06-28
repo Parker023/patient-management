@@ -1,0 +1,8 @@
+Hello {{name}},
+
+Your One-Time Password (OTP) for verification is: {{otp}}.
+
+This OTP is valid for 5 minutes. Please do not share it with anyone.
+
+Regards,
+Patient Service Team
