@@ -1,5 +1,16 @@
 spring:
     application:
         name: auth-service
+    mail:
+        host: smtp.gmail.com
+        port: 587
+        username: amirudhshanmukha2399@gmail.com
+        password: incg fxmb epll aizw
+        properties:
+            mail:
+                smtp:
+                    auth: true
+                    starttls:
+                        enable: true
 server:
     port: 4005
