@@ -1,24 +1,27 @@
 spring:
-    application:
-        name: auth-service
-    mail:
-        host: smtp.gmail.com
-        port: 587
-        username: amirudhshanmukha2399@gmail.com
-        password: incg fxmb epll aizw
-        properties:
-            mail:
-                smtp:
-                    auth: true
-                    starttls:
-                        enable: true
-    kafka:
-        producer:
-            key-serializer: org.apache.kafka.common.serialization.StringSerializer
-            value-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
-    data:
-        redis:
-            host: localhost
-            port: 6379
+  application:
+    name: auth-service
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: amirudhshanmukha2399@gmail.com
+    password: incg fxmb epll aizw
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
+  data:
+    redis:
+      host: pms-redis
+      port: 6379
+      password: password
 server:
-    port: 4005
+  port: 4005
+#jwt:
+#  secret: lKfBLcy5NchjcFbyTtHREy+IAKa3X5pdRYd9BpFUrmQCzRcyR8U9ZVLqdUu5YfAz

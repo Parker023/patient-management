@@ -34,6 +34,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-hateoas'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
 // gRPC dependencies
     implementation 'io.grpc:grpc-netty-shaded:1.69.0'
     implementation 'io.grpc:grpc-protobuf:1.69.0'

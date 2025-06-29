@@ -3,6 +3,7 @@ package com.parker.authservice.service;
 import com.github.f4b6a3.uuid.UuidCreator;
 import com.parker.authservice.constants.AuthConstants;
 import com.parker.authservice.dto.*;
+import com.parker.authservice.exception.OtpVerificationException;
 import com.parker.authservice.kafka.KafkaProducer;
 import com.parker.authservice.mapper.EntityDtoMapper;
 import com.parker.authservice.model.User;
@@ -46,8 +47,30 @@ public class AuthService {
 
     }
 
-    public UserDto registerUser(RegistrationRequest registrationRequest) {
+    public void registerUser(RegistrationRequest registrationRequest) {
+        log.info("Register User");
+        otpManager.generateAndSendOtp(AuthConstants.EMAIL.getValue(), registrationRequest);
+    }
+
+    public UserDto validateOtp(VerifyOtpDto verifyOtpDto) {
+        boolean isVerified = otpManager.verifyOtp(AuthConstants.EMAIL.getValue(), verifyOtpDto);
+        if (!isVerified) {
+            throw new OtpVerificationException("Invalid OTP");
+        }
+
+        String key = otpManager.getOtpKey(AuthConstants.EMAIL.getValue(), verifyOtpDto.getOtp());
+        PendingRegistration pendingRegistration = otpSenderRedisTemplate.opsForValue().get(key);
+
+        if (Objects.isNull(pendingRegistration)) {
+            throw new OtpVerificationException("OTP verification failed");
+        }
+
+        log.info("OTP verified. Deleting OTP from Redis.");
+        otpSenderRedisTemplate.delete(key);
+
+        RegistrationRequest registrationRequest = pendingRegistration.getRegistrationData();
         registrationRequest.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
+
         AuthRequest authRequest = entityDtoMapper.toDto(registrationRequest, AuthRequest.class);
         User user = entityDtoMapper.toEntity(authRequest, User.class);
 
@@ -55,24 +78,12 @@ public class AuthService {
         if (Objects.isNull(user.getRole())) {
             user.setRole("ROLE_USER");
         }
-        otpManager.generateAndSendOtp(AuthConstants.EMAIL.getValue(), registrationRequest);
-        User savedUser = userService.save(user);
-        return entityDtoMapper.toDto(savedUser, UserDto.class);
-    }
 
-    public boolean validateOtp(VerifyOtpDto verifyOtpDto) {
-        boolean isVerified = otpManager.verifyOtp(AuthConstants.EMAIL.getValue(), verifyOtpDto);
-        if (isVerified) {
-            String key = otpManager.getOtpKey(AuthConstants.EMAIL.getValue(), verifyOtpDto.getOtp());
-            PendingRegistration pendingRegistration = otpSenderRedisTemplate.opsForValue().get(key);
-            if (Objects.isNull(pendingRegistration)) {
-                return false;
-            } else {
-                log.info("Otp has been verified and deleting the message for redis !!!");
-                otpSenderRedisTemplate.delete(key);
-            }
-            kafkaProducer.sendToPatient(pendingRegistration.getRegistrationData());
-        }
-        return isVerified;
+        User savedUser = userService.save(user);
+
+        kafkaProducer.sendToPatient(registrationRequest);
+
+        return entityDtoMapper.toDto(savedUser, UserDto.class);
+
     }
 }

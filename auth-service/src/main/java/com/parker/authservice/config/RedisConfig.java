@@ -1,5 +1,8 @@
 package com.parker.authservice.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.parker.authservice.dto.PendingRegistration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,10 +21,17 @@ public class RedisConfig {
     public RedisTemplate<String, PendingRegistration> otpSenderRedisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, PendingRegistration> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
+        //we're using LocalDate in RegistrationRequest and Jackson2JsonRedisSerializer unable to deserialize
+        // so we need to provide  custom mapper
 
-        // Use JSON serialization
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        Jackson2JsonRedisSerializer<PendingRegistration> serializer =
+                new Jackson2JsonRedisSerializer<>(mapper, PendingRegistration.class);
         template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(new Jackson2JsonRedisSerializer<>(PendingRegistration.class));
+        template.setValueSerializer(serializer);
 
         return template;
     }

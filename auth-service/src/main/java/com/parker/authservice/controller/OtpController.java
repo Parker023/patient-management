@@ -1,17 +1,21 @@
 package com.parker.authservice.controller;
 
-import com.parker.authservice.constants.AuthConstants;
-import com.parker.authservice.dto.OtpRequestDto;
+import com.parker.authservice.dto.RegistrationResponse;
+import com.parker.authservice.dto.UserDto;
 import com.parker.authservice.dto.VerifyOtpDto;
 import com.parker.authservice.service.AuthService;
-import com.parker.authservice.service.impl.OtpManager;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 
 /**
@@ -23,11 +27,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/patient/otp/")
 @Tag(name = "Patient", description = "API for managing patients")
 public class OtpController {
-private final AuthService authService;
+    private final AuthService authService;
+
     @PostMapping("verify")
-    public ResponseEntity<String> verifyOtp(@RequestBody VerifyOtpDto verifyOtpDto) {
-        boolean isVerified = authService.validateOtp(verifyOtpDto);
-        String message = isVerified ? AuthConstants.OTP_VERIFIED.getValue() : AuthConstants.INVALID_OTP.getValue();
-        return ResponseEntity.ok(message);
+    public ResponseEntity<EntityModel<RegistrationResponse<UserDto>>> verifyOtp(@Valid @RequestBody VerifyOtpDto verifyOtpDto) {
+        UserDto user = authService.validateOtp(verifyOtpDto);
+        RegistrationResponse<UserDto> registrationResponse = new RegistrationResponse<>(user, "User registered successfully , Please login !!!");
+        EntityModel<RegistrationResponse<UserDto>> model = EntityModel.of(registrationResponse,
+                linkTo(methodOn(AuthController.class).register(null)).withSelfRel(),
+                linkTo(methodOn(AuthController.class).login(null)).withRel("login")
+        );
+        return ResponseEntity.ok(model);
     }
 }

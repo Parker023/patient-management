@@ -35,6 +35,7 @@ public class OtpManager {
         PendingRegistration registration = constructPendingRegistration(otp, registrationRequest);
         otpSenderRedisTemplate.opsForValue().set(key, registration, 10, TimeUnit.SECONDS);
         senderFactory.getOtpSender(channel).sendOtp(registrationRequest.getEmail(), otp);
+        log.info("OTP sent successfully");
     }
 
     public boolean verifyOtp(String channel, VerifyOtpDto verifyOtpDto) {
@@ -45,7 +46,7 @@ public class OtpManager {
         if (Objects.isNull(pendingRegistration)) {
             return false;
         }
-        log.info("submittedOtp:{}", submittedOtp);
+        log.info("submitted OTP:{}", submittedOtp);
         return Objects.nonNull(pendingRegistration.getOtp()) && pendingRegistration.getOtp().equals(submittedOtp);
     }
 

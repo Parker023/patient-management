@@ -1,11 +1,16 @@
 ### POST request to create Patient
-POST http://lb-942f830e.elb.localhost.localstack.cloud:4000/api/v1/patient/create
+#POST http://lb-942f830e.elb.localhost.localstack.cloud:4000/api/v1/patient/create
+POST http://localhost:4004/auth/register
 Content-Type: application/json
 
 {
-  "name": "Shanmukha",
-  "email": "shanmukha2399@gmail.com",
+  "name": "Hrushi",
+  "email": "hrushikeshpenubarthi@gmail.com",
   "address": "Bangalore",
-  "dateOfBirth": "1999-11-23"
+  "dateOfBirth": "2000-08-27",
+  "gender": "male",
+  "password": "password",
+  "role": "ROLE_PATIENT"
+
 }
 ###

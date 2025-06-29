@@ -59,21 +59,16 @@ public class AuthController {
                 : ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    @Operation(summary = "Register an User")
+    @Operation(summary = "generate and send OTPr")
     @PostMapping("/register")
     public ResponseEntity<EntityModel<RegistrationResponse<UserDto>>> register(
-            @RequestBody RegistrationRequest registrationRequest) {
-        UserDto savedUser = authService.registerUser(registrationRequest);
+            @Valid @RequestBody RegistrationRequest registrationRequest) {
+        authService.registerUser(registrationRequest);
         /*Link link=WebMvcLinkBuilder.linkTo(AuthController.class)
                 .slash("login")
                 .withRel("next")
                 .withType("POST");*/
-        RegistrationResponse<UserDto> registrationResponse = new RegistrationResponse<>(savedUser, "User registered successfully , Please login again !!!");
-        EntityModel<RegistrationResponse<UserDto>> model=EntityModel.of(registrationResponse,
-                linkTo(methodOn(AuthController.class).register(registrationRequest)).withSelfRel(),
-                linkTo(methodOn(AuthController.class).login(null)).withRel("login")
-        );
-        return ResponseEntity.ok(model);
+        return ResponseEntity.noContent().build();
     }
 
 
