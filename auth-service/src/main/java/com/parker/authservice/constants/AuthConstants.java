@@ -11,7 +11,7 @@ public enum AuthConstants {
     EMAIL("email"), SMS("sms"), OTP_TTL_SECONDS("300"), OTP("otp"),
     OTP_VERIFIED("OTP Verified"), INVALID_OTP("Invalid OTP"),
     EMAIL_TEMPLATE("email-otp-template.txt"), MESSAGE("message"),
-    PENDING("pending:email"), COLON(":");
+    PENDING("pending"), COLON(":");
     private final String value;
 
     AuthConstants(String value) {

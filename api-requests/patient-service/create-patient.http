@@ -4,10 +4,10 @@ POST http://localhost:4004/auth/register
 Content-Type: application/json
 
 {
-  "name": "Hrushi",
-  "email": "hrushikeshpenubarthi@gmail.com",
+  "name": "Anirudh",
+  "email": "shanmukha2399@gmail.com",
   "address": "Bangalore",
-  "dateOfBirth": "2000-08-27",
+  "dateOfBirth": "1999-11-23",
   "gender": "male",
   "password": "password",
   "role": "ROLE_PATIENT"

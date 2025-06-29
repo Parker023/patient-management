@@ -6,6 +6,7 @@ import com.parker.authservice.dto.RegistrationRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.time.format.DateTimeFormatter;
@@ -20,6 +21,7 @@ import java.time.format.DateTimeFormatter;
 public class KafkaProducer {
     private final KafkaTemplate<String, String> kafkaTemplate;
 
+    @Async
     public void sendToPatient(RegistrationRequest registrationRequest) {
         PatientRequest request = PatientRequest.newBuilder()
                 .setEmail(registrationRequest.getEmail())
@@ -29,6 +31,7 @@ public class KafkaProducer {
                 .setDateOfBirth(registrationRequest.getDateOfBirth().format(DateTimeFormatter.ISO_DATE))
                 .build();
         try {
+            log.info("Sending message to patient {}", request);
             kafkaTemplate.send("patient-registration", request.toString());
         } catch (Exception e) {
             log.error("Error sending event to kafka : {}", request);

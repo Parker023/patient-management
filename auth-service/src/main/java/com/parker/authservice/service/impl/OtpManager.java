@@ -33,7 +33,7 @@ public class OtpManager {
         log.info("Sending OTP {} to channel {}", otp, channel);
         String key = getOtpKey(channel, registrationRequest.getEmail());
         PendingRegistration registration = constructPendingRegistration(otp, registrationRequest);
-        otpSenderRedisTemplate.opsForValue().set(key, registration, 10, TimeUnit.SECONDS);
+        otpSenderRedisTemplate.opsForValue().set(key, registration, 3, TimeUnit.MINUTES);
         senderFactory.getOtpSender(channel).sendOtp(registrationRequest.getEmail(), otp);
         log.info("OTP sent successfully");
     }
@@ -43,6 +43,7 @@ public class OtpManager {
         String submittedOtp = verifyOtpDto.getOtp();
         String key = getOtpKey(channel, destination);
         PendingRegistration pendingRegistration = otpSenderRedisTemplate.opsForValue().get(key);
+        log.info("pending registration is {}", pendingRegistration);
         if (Objects.isNull(pendingRegistration)) {
             return false;
         }
@@ -51,7 +52,7 @@ public class OtpManager {
     }
 
     public String getOtpKey(String channel, String destination) {
-        return AuthConstants.PENDING.getValue() + AuthConstants.COLON + channel + AuthConstants.COLON + destination;
+        return AuthConstants.PENDING.getValue() + AuthConstants.COLON.getValue() + channel + AuthConstants.COLON.getValue() + destination;
     }
 
     private PendingRegistration constructPendingRegistration(String otp, RegistrationRequest request) {

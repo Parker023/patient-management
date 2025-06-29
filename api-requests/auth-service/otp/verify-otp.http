@@ -1,0 +1,10 @@
+### POST request to verify otp
+POST http://localhost:4004/auth/api/v1/patient/otp/verify
+Content-Type: application/json
+
+{
+  "email": "shanmukha2399@gmail.com",
+  "otp": "230303"
+}
+
+###

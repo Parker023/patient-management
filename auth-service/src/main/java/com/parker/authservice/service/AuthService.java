@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
@@ -52,38 +53,41 @@ public class AuthService {
         otpManager.generateAndSendOtp(AuthConstants.EMAIL.getValue(), registrationRequest);
     }
 
-    public UserDto validateOtp(VerifyOtpDto verifyOtpDto) {
-        boolean isVerified = otpManager.verifyOtp(AuthConstants.EMAIL.getValue(), verifyOtpDto);
-        if (!isVerified) {
-            throw new OtpVerificationException("Invalid OTP");
-        }
+    public CompletableFuture<UserDto> validateOtp(VerifyOtpDto verifyOtpDto) {
+        return CompletableFuture
+                .supplyAsync(() -> otpManager
+                        .verifyOtp(AuthConstants.EMAIL.getValue(), verifyOtpDto))
+                .thenApplyAsync(isVerified -> {
+                    if (!Boolean.TRUE.equals(isVerified)) {
+                        throw new OtpVerificationException("Otp verification failed");
+                    }
+                    return otpManager.getOtpKey(AuthConstants.EMAIL.getValue(), verifyOtpDto.getEmail());
+                })
+                .thenApplyAsync(redisKey -> {
+                    PendingRegistration pendingRegistration = otpSenderRedisTemplate.opsForValue().get(redisKey);
+                    if (Objects.isNull(pendingRegistration)) {
+                        throw new OtpVerificationException("OTP verification failed");
+                    }
+                    log.info("OTP verified. Deleting OTP from Redis.");
+                    otpSenderRedisTemplate.delete(redisKey);
+                    return pendingRegistration.getRegistrationData();
+                })
+                .thenApplyAsync(request -> {
+                    request.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        String key = otpManager.getOtpKey(AuthConstants.EMAIL.getValue(), verifyOtpDto.getOtp());
-        PendingRegistration pendingRegistration = otpSenderRedisTemplate.opsForValue().get(key);
+                    AuthRequest authRequest = entityDtoMapper.toDto(request, AuthRequest.class);
+                    User user = entityDtoMapper.toEntity(authRequest, User.class);
 
-        if (Objects.isNull(pendingRegistration)) {
-            throw new OtpVerificationException("OTP verification failed");
-        }
+                    user.setId(UuidCreator.getTimeBased());
+                    if (Objects.isNull(user.getRole())) {
+                        user.setRole("ROLE_USER");
+                    }
 
-        log.info("OTP verified. Deleting OTP from Redis.");
-        otpSenderRedisTemplate.delete(key);
+                    User savedUser = userService.save(user);
+                    CompletableFuture.runAsync(() -> kafkaProducer.sendToPatient(request));
+                    return entityDtoMapper.toDto(savedUser, UserDto.class);
+                });
 
-        RegistrationRequest registrationRequest = pendingRegistration.getRegistrationData();
-        registrationRequest.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
-
-        AuthRequest authRequest = entityDtoMapper.toDto(registrationRequest, AuthRequest.class);
-        User user = entityDtoMapper.toEntity(authRequest, User.class);
-
-        user.setId(UuidCreator.getTimeBased());
-        if (Objects.isNull(user.getRole())) {
-            user.setRole("ROLE_USER");
-        }
-
-        User savedUser = userService.save(user);
-
-        kafkaProducer.sendToPatient(registrationRequest);
-
-        return entityDtoMapper.toDto(savedUser, UserDto.class);
 
     }
 }
