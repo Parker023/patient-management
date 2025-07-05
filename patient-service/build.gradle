@@ -31,6 +31,7 @@ dependencies {
 	implementation 'org.springframework.kafka:spring-kafka'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	testImplementation 'org.springframework.kafka:spring-kafka-test'
 	// Java 9+ compatibility
 	compileOnly 'org.apache.tomcat:annotations-api:6.0.53'

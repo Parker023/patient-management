@@ -26,5 +26,6 @@ COPY --from=builder /app/build/libs/*.jar ./app.jar
 
 
 EXPOSE 4000
+EXPOSE 9001
 
 ENTRYPOINT ["java", "-jar", "app.jar"]

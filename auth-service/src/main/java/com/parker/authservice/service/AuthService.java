@@ -53,8 +53,8 @@ public class AuthService {
         otpManager.generateAndSendOtp(AuthConstants.EMAIL.getValue(), registrationRequest);
     }
 
-    public CompletableFuture<UserDto> validateOtp(VerifyOtpDto verifyOtpDto) {
-        return CompletableFuture
+    public UserDto validateOtp(VerifyOtpDto verifyOtpDto) {
+        User persistedUser = CompletableFuture
                 .supplyAsync(() -> otpManager
                         .verifyOtp(AuthConstants.EMAIL.getValue(), verifyOtpDto))
                 .thenApplyAsync(isVerified -> {
@@ -85,9 +85,9 @@ public class AuthService {
 
                     User savedUser = userService.save(user);
                     CompletableFuture.runAsync(() -> kafkaProducer.sendToPatient(request));
-                    return entityDtoMapper.toDto(savedUser, UserDto.class);
-                });
+                    return savedUser;
+                }).join();
 
-
+        return entityDtoMapper.toDto(persistedUser, UserDto.class);
     }
 }

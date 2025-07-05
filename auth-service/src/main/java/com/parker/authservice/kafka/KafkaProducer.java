@@ -19,7 +19,7 @@ import java.time.format.DateTimeFormatter;
 @Slf4j
 @RequiredArgsConstructor
 public class KafkaProducer {
-    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final KafkaTemplate<String, byte[]> kafkaTemplate;
 
     @Async
     public void sendToPatient(RegistrationRequest registrationRequest) {
@@ -32,9 +32,9 @@ public class KafkaProducer {
                 .build();
         try {
             log.info("Sending message to patient {}", request);
-            kafkaTemplate.send("patient-registration", request.toString());
+            kafkaTemplate.send("patient-registration", request.toByteArray());
         } catch (Exception e) {
-            log.error("Error sending event to kafka : {}", request);
+            log.error("Error sending event to kafka : {} {}", request ,e.getMessage());
         }
 
 

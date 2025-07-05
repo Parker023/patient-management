@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.concurrent.CompletableFuture;
-
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -32,16 +30,13 @@ public class OtpController {
     private final AuthService authService;
 
     @PostMapping("verify")
-    public CompletableFuture<ResponseEntity<EntityModel<RegistrationResponse<UserDto>>>> verifyOtp(@Valid @RequestBody VerifyOtpDto verifyOtpDto) {
-        return authService.validateOtp(verifyOtpDto)
-                .thenApply(user -> {
-                    RegistrationResponse<UserDto> registrationResponse = new RegistrationResponse<>(user, "User registered successfully , Please login !!!");
-                    EntityModel<RegistrationResponse<UserDto>> model = EntityModel.of(registrationResponse,
-                            linkTo(methodOn(AuthController.class).register(null)).withSelfRel(),
-                            linkTo(methodOn(AuthController.class).login(null)).withRel("login"));
-                    return ResponseEntity.ok(model);
-                });
-
-
+    public ResponseEntity<EntityModel<RegistrationResponse<UserDto>>> verifyOtp(@Valid @RequestBody VerifyOtpDto verifyOtpDto) {
+        UserDto user = authService.validateOtp(verifyOtpDto);
+        RegistrationResponse<UserDto> registrationResponse = new RegistrationResponse<>(user, "User registered successfully , Please login !!!");
+        EntityModel<RegistrationResponse<UserDto>> model = EntityModel.of(registrationResponse,
+                linkTo(methodOn(AuthController.class).register(null)).withSelfRel(),
+                linkTo(methodOn(AuthController.class).login(null)).withRel("login")
+        );
+        return ResponseEntity.ok(model);
     }
 }
