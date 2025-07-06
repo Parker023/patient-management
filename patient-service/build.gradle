@@ -29,12 +29,15 @@ dependencies {
     implementation 'io.grpc:grpc-protobuf:1.69.0'
     implementation 'io.grpc:grpc-stub:1.69.0'
     implementation 'org.springframework.kafka:spring-kafka'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.17.1'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     testImplementation 'org.springframework.kafka:spring-kafka-test'
     // Java 9+ compatibility
     compileOnly 'org.apache.tomcat:annotations-api:6.0.53'
+    // opencsv
+    implementation 'com.opencsv:opencsv:5.9'
 
     implementation 'com.google.protobuf:protobuf-java:4.29.1'
 
