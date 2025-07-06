@@ -1,74 +1,81 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.5.0'
-	id 'com.google.protobuf' version '0.9.5'  // use latest stable version
-	id 'io.spring.dependency-management' version '1.1.7'
+    id 'java'
+    id 'org.springframework.boot' version '3.5.0'
+    id 'com.google.protobuf' version '0.9.5'  // use latest stable version
+    id 'io.spring.dependency-management' version '1.1.7'
 }
 
 group = 'com.parker'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.8'
-	implementation 'org.modelmapper:modelmapper:3.1.1'
-	// gRPC dependencies
-	implementation 'io.grpc:grpc-netty-shaded:1.69.0'
-	implementation 'io.grpc:grpc-protobuf:1.69.0'
-	implementation 'io.grpc:grpc-stub:1.69.0'
-	implementation 'org.springframework.kafka:spring-kafka'
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-	implementation 'org.springframework.boot:spring-boot-starter-mail'
-	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-	testImplementation 'org.springframework.kafka:spring-kafka-test'
-	// Java 9+ compatibility
-	compileOnly 'org.apache.tomcat:annotations-api:6.0.53'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.8'
+    implementation 'org.modelmapper:modelmapper:3.1.1'
+    // gRPC dependencies
+    implementation 'io.grpc:grpc-netty-shaded:1.69.0'
+    implementation 'io.grpc:grpc-protobuf:1.69.0'
+    implementation 'io.grpc:grpc-stub:1.69.0'
+    implementation 'org.springframework.kafka:spring-kafka'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+    // Java 9+ compatibility
+    compileOnly 'org.apache.tomcat:annotations-api:6.0.53'
 
-	implementation 'com.google.protobuf:protobuf-java:4.29.1'
+    implementation 'com.google.protobuf:protobuf-java:4.29.1'
 
-	// gRPC Spring Boot starter
-	implementation 'net.devh:grpc-spring-boot-starter:3.1.0.RELEASE'
-	compileOnly 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    // gRPC Spring Boot starter
+    implementation 'net.devh:grpc-spring-boot-starter:3.1.0.RELEASE'
+    compileOnly 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
 //	runtimeOnly 'com.mysql:mysql-connector-j'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'com.h2database:h2'
-	runtimeOnly 'org.postgresql:postgresql'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'com.h2database:h2'
+    runtimeOnly 'org.postgresql:postgresql'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+    testImplementation 'org.mockito:mockito-core:5.11.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.11.0' // for @ExtendWith(MockitoExtension.class)
+
+    test {
+        useJUnitPlatform() // This is ESSENTIAL for JUnit 5!
+    }
 }
 
 protobuf {
-	protoc {
-		artifact = "com.google.protobuf:protoc:3.25.5"
-	}
-	plugins {
-		grpc {
-			artifact = "io.grpc:protoc-gen-grpc-java:1.68.1"
-		}
-	}
-	generateProtoTasks {
-		all().each { task ->
-			task.plugins {
-				grpc {}
-			}
-		}
-	}
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.25.5"
+    }
+    plugins {
+        grpc {
+            artifact = "io.grpc:protoc-gen-grpc-java:1.68.1"
+        }
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.plugins {
+                grpc {}
+            }
+        }
+    }
 }
 
 bootJar {
-	archiveFileName = 'patient-service.jar'
+    archiveFileName = 'patient-service.jar'
 }
 
