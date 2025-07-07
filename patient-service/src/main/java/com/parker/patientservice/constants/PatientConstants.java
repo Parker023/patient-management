@@ -8,7 +8,8 @@ import lombok.Getter;
  */
 @Getter
 public enum PatientConstants {
-    PATIENT("patient"), MESSAGE("message");
+    PATIENT("patient"), MESSAGE("message"),
+    JSON("json"), XML("xml"), CSV("csv");
     private final String value;
 
 
