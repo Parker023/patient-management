@@ -4,8 +4,9 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.parker.patientservice.dto.PatientResponseDTO;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -13,10 +14,11 @@ import java.util.List;
  * @author shanmukhaanirudhtalluri
  * @date 06/07/25
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @JacksonXmlRootElement(localName = "patientsResponse")
-public class PatientsWrapper extends BaseExportWrapper<PatientResponseDTO> {
+public class PatientsWrapper implements BaseExportWrapper {
 
     private int page;
     private int size;
@@ -28,8 +30,4 @@ public class PatientsWrapper extends BaseExportWrapper<PatientResponseDTO> {
     private List<PatientResponseDTO> patients;
 
 
-    @Override
-    public List<PatientResponseDTO> getData() {
-        return patients;
-    }
 }

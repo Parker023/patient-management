@@ -1,14 +1,15 @@
 package com.parker.patientservice.dto.wrapper;
 
-import java.util.List;
 
 /**
- * An abstract base class designed to serve as a wrapper for exporting data of generic type {@code T}.
- * This class is intended to be extended to provide specific implementation details for data retrieval.
- *
- * @param <T> the type of the data that this wrapper will handle
+ * Marker interface for classes that serve as wrappers for exportable data.
+ * <p>
+ * This interface is intended to be implemented by data wrapper classes
+ * that are used for exporting data in various formats such as XML, JSON, or CSV.
+ * It allows for a unified interface to be utilized by different export strategies.
+ * <p>
+ * Classes implementing this interface should encapsulate structured data that can be
+ * processed by export services.
  */
-public abstract class BaseExportWrapper<T> {
-    public abstract List<T> getData();
-
+public interface BaseExportWrapper {
 }

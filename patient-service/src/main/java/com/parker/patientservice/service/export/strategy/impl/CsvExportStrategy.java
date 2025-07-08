@@ -16,7 +16,7 @@ public class CsvExportStrategy implements ExportStrategy {
     }
 
     @Override
-    public byte[] export(BaseExportWrapper<?> baseExportWrapper) {
+    public byte[] export(BaseExportWrapper baseExportWrapper) {
         //TODO write business logic for Csv
         return new byte[0];
     }

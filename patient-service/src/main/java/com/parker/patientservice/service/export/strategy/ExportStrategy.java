@@ -9,5 +9,5 @@ import com.parker.patientservice.dto.wrapper.BaseExportWrapper;
 public interface ExportStrategy {
     String getFormat();
 
-    byte[] export(BaseExportWrapper<?> baseExportWrapper);
+    byte[] export(BaseExportWrapper baseExportWrapper);
 }

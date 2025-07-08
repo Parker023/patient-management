@@ -17,6 +17,9 @@ java {
 repositories {
     mavenCentral()
 }
+configurations.configureEach {
+    exclude group: 'com.fasterxml.jackson.module', module: 'jackson-module-scala_2.13'
+}
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
