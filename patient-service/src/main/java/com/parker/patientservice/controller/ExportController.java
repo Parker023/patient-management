@@ -28,7 +28,7 @@ public class ExportController {
                                                  @RequestParam(defaultValue = "id") String sortFields,
                                                  @RequestParam(defaultValue = "asc") String order) {
         log.info("Exporting Patients in format {}", format);
-
-        return ResponseEntity.ok().build();
+        byte[] exportData = exportManager.export(format, num, size, sortFields, order);
+        return ResponseEntity.ok(exportData);
     }
 }

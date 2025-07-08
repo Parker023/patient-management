@@ -17,12 +17,15 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -81,12 +84,11 @@ class PatientServiceTest {
     @Test
     void getAllPatients() {
 
-        List<Patient> patients = List.of(patient);
 
-        when(patientRepository.findAll()).thenReturn(patients);
         when(entityDtoMapper.toDto(patient, PatientResponseDTO.class)).thenReturn(patientResponseDTO);
-
-        List<PatientResponseDTO> result = patientService.getAllPatients(0,10,"id","asc");
+        when(patientRepository.findAll(any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(patient)));
+        List<PatientResponseDTO> result = patientService.getAllPatients(0, 10, "id", "asc");
 
         assertEquals(1, result.size());
         PatientResponseDTO actual = result.getFirst();

@@ -42,7 +42,7 @@ public class XmlExportStrategy implements ExportStrategy {
     public byte[] export(BaseExportWrapper baseExportWrapper) {
         log.info("XML export begin !!");
         try {
-            return xmlMapper.writeValueAsBytes(baseExportWrapper.getData());
+            return xmlMapper.writeValueAsBytes(baseExportWrapper);
         } catch (JsonProcessingException e) {
             log.error("Error while serializing data to XML", e);
             throw new XmlSerializationException(e);
