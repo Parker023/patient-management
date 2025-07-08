@@ -10,8 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 /**
  * @author shanmukhaanirudhtalluri
  * @date 07/07/25
@@ -22,6 +20,11 @@ import java.util.List;
 public class XmlExportStrategy implements ExportStrategy {
     private final XmlMapper xmlMapper;
 
+    /**
+     * Retrieves the format in which data will be exported.
+     *
+     * @return a string value representing the format, such as "xml".
+     */
     @Override
     public String getFormat() {
         return PatientConstants.XML.getValue();
@@ -40,8 +43,9 @@ public class XmlExportStrategy implements ExportStrategy {
         log.info("XML export begin !!");
         byte[] xmlBytes = null;
         try {
-            xmlBytes = xmlMapper.writeValueAsBytes(baseExportWrapper);
+            xmlBytes = xmlMapper.writeValueAsBytes(baseExportWrapper.getData());
         } catch (JsonProcessingException e) {
+            log.error("Error while serializing data to XML", e);
             throw new XmlSerializationException(e);
         }
         return xmlBytes;

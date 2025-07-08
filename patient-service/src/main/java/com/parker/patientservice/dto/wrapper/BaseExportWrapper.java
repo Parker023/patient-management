@@ -1,6 +1,10 @@
 package com.parker.patientservice.dto.wrapper;
 
 
+import com.parker.patientservice.dto.PatientResponseDTO;
+
+import java.util.List;
+
 /**
  * Marker interface for classes that serve as wrappers for exportable data.
  * <p>
@@ -12,4 +16,5 @@ package com.parker.patientservice.dto.wrapper;
  * processed by export services.
  */
 public interface BaseExportWrapper {
+    public List<PatientResponseDTO> getData();
 }

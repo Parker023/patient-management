@@ -30,4 +30,8 @@ public class PatientsWrapper implements BaseExportWrapper {
     private List<PatientResponseDTO> patients;
 
 
+    @Override
+    public List<PatientResponseDTO> getData() {
+        return patients;
+    }
 }

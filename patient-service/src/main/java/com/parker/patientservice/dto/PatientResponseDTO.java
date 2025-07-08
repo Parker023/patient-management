@@ -7,11 +7,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @JacksonXmlRootElement(localName = "patient")
-public class PatientResponseDTO {
+public class PatientResponseDTO implements BaseResponseDto, Serializable {
 
     @JacksonXmlProperty(localName = "id")
     @CsvBindByName(column = "id")
