@@ -37,4 +37,12 @@ public class GlobalExceptionHandler {
         errors.put(PatientConstants.MESSAGE.getValue(), exception.getMessage());
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(value = XmlSerializationException.class)
+    public ResponseEntity<Map<String, String>> handleXmlSerializationException(XmlSerializationException exception) {
+        log.error("xml serialization exception !");
+        Map<String, String> errors = new HashMap<>();
+        errors.put(PatientConstants.MESSAGE.getValue(), exception.getMessage());
+        return new ResponseEntity<>(errors, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }
