@@ -1,4 +1,6 @@
 ### GET request to get all patients
-GET http://localhost:4004/api/v1/patient/export/patients?format=xml&num=0&size=10&sortFields=dateOfBirth&order=desc
+GET http://localhost:4004/api/v1/patient/export/patients?format=json&num=1&size=10&sortFields=dateOfBirth&order=desc
 Authorization: Bearer {{token}}
+Accept: application/json
+
 ###
