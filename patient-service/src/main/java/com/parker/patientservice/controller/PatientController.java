@@ -16,14 +16,17 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/patient/")
 @RequiredArgsConstructor
-@Tag(name = "Patient",description = "API for managing patients")
+@Tag(name = "Patient", description = "API for managing patients")
 public class PatientController {
     private final PatientService patientService;
 
     @GetMapping("all")
     @Operation(summary = "Get All Patients")
-    public ResponseEntity<List<PatientResponseDTO>> getAllPatients() {
-        List<PatientResponseDTO> allPatients = patientService.getAllPatients();
+    public ResponseEntity<List<PatientResponseDTO>> getAllPatients(@RequestParam(defaultValue = "0") int num,
+                                                                   @RequestParam(defaultValue = "10") int size,
+                                                                   @RequestParam(defaultValue = "id") String sortFields,
+                                                                   @RequestParam(defaultValue = "asc") String order) {
+        List<PatientResponseDTO> allPatients = patientService.getAllPatients(num, size, sortFields, order);
         return ResponseEntity.ok(allPatients);
     }
 

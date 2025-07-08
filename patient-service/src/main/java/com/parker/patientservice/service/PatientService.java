@@ -13,11 +13,15 @@ import com.parker.patientservice.repository.PatientRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -32,14 +36,21 @@ public class PatientService {
     private final KafkaProducer kafkaProducer;
     private final EntityManager entityManager;
 
+
     /**
-     * Retrieves a list of all patients.
+     * Retrieves a paginated and sorted list of all patients.
      *
-     * @return a list of {@link PatientResponseDTO} objects representing all patients in the system.
+     * @param pageNum       the page number to retrieve, zero-based.
+     * @param pageSize      the number of records per page.
+     * @param sortFields    the comma-separated string of field names to sort by.
+     * @param sortDirection the direction of sorting, either "ASC" for ascending or "DESC" for descending.
+     * @return a list of {@link PatientResponseDTO} containing the details of the retrieved patients.
      */
-    public List<PatientResponseDTO> getAllPatients() {
+    public List<PatientResponseDTO> getAllPatients(int pageNum, int pageSize, String sortFields, String sortDirection) {
+        log.info("Getting all patients with pageNum {} and pageSize {} and sortFields {} and sortDirection {} ", pageNum, pageSize, sortFields, sortDirection);
+        Pageable pageRequest = createPageRequest(pageNum, pageSize, sortFields, sortDirection);
         return patientRepository
-                .findAll()
+                .findAll(pageRequest)
                 .stream()
                 .filter(Objects::nonNull)
                 .map(patient -> entityDtoMapper.toDto(patient, PatientResponseDTO.class))
@@ -77,7 +88,7 @@ public class PatientService {
      * @param patient the patient object containing the ID, name, and email to be used
      *                for creating the billing account.
      * @return a {@link BillingResponse} object containing information about the
-     *         created billing account.
+     * created billing account.
      */
     private BillingResponse createBillingAccount(Patient patient) {
         return billingServiceGrpcClient.createBillingAccount(patient.getId().toString(), patient.getName(), patient.getEmail());
@@ -92,9 +103,9 @@ public class PatientService {
      * Performs validation to ensure email uniqueness and the existence of the patient before updating.
      *
      * @param patientRequestDTO the data transfer object containing updated patient details such as name, email, address, and date of birth.
-     * @param patientId the unique identifier of the patient whose details need to be updated.
+     * @param patientId         the unique identifier of the patient whose details need to be updated.
      * @return a {@link PatientResponseDTO} object containing the updated patient details.
-     * @throws PatientNotFoundException if no patient is found with the specified ID.
+     * @throws PatientNotFoundException    if no patient is found with the specified ID.
      * @throws EmailAlreadyExistsException if another patient with the same email already exists.
      */
     public PatientResponseDTO updatePatient(PatientRequestDTO patientRequestDTO, UUID patientId) {
@@ -117,6 +128,15 @@ public class PatientService {
      */
     private void generateIdAndSet(Patient patient) {
         patient.setId(UUID.randomUUID());
+    }
+
+    public Pageable createPageRequest(int num, int size, String sortFields, String order) {
+        Sort.Direction direction = Sort.Direction.fromOptionalString(order).orElse(Sort.Direction.ASC);
+        Sort sort = Sort.by(Arrays.stream(sortFields.split(","))
+                .map(String::trim)
+                .map(field -> new Sort.Order(direction, field))
+                .toList());
+        return PageRequest.of(num, size, sort);
     }
 
     public void deletePatient(UUID patientId) {

@@ -23,7 +23,6 @@ public class PatientsWrapper implements BaseExportWrapper {
     private int page;
     private int size;
     private long totalItems;
-    private int totalPages;
 
     @JacksonXmlElementWrapper(localName = "patients")
     @JacksonXmlProperty(localName = "patient")

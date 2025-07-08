@@ -86,7 +86,7 @@ class PatientServiceTest {
         when(patientRepository.findAll()).thenReturn(patients);
         when(entityDtoMapper.toDto(patient, PatientResponseDTO.class)).thenReturn(patientResponseDTO);
 
-        List<PatientResponseDTO> result = patientService.getAllPatients();
+        List<PatientResponseDTO> result = patientService.getAllPatients(0,10,"id","asc");
 
         assertEquals(1, result.size());
         PatientResponseDTO actual = result.getFirst();
