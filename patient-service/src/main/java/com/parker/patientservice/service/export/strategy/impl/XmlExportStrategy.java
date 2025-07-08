@@ -41,13 +41,11 @@ public class XmlExportStrategy implements ExportStrategy {
 
     public byte[] export(BaseExportWrapper baseExportWrapper) {
         log.info("XML export begin !!");
-        byte[] xmlBytes = null;
         try {
-            xmlBytes = xmlMapper.writeValueAsBytes(baseExportWrapper.getData());
+            return xmlMapper.writeValueAsBytes(baseExportWrapper.getData());
         } catch (JsonProcessingException e) {
             log.error("Error while serializing data to XML", e);
             throw new XmlSerializationException(e);
         }
-        return xmlBytes;
     }
 }
