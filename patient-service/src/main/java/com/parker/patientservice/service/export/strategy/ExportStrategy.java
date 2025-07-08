@@ -1,7 +1,6 @@
 package com.parker.patientservice.service.export.strategy;
 
 import com.parker.patientservice.dto.wrapper.BaseExportWrapper;
-import com.parker.patientservice.exception.XmlSerializationException;
 
 /**
  * @author shanmukhaanirudhtalluri

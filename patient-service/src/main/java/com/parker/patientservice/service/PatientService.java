@@ -11,7 +11,6 @@ import com.parker.patientservice.exception.PatientNotFoundException;
 import com.parker.patientservice.model.Patient;
 import com.parker.patientservice.repository.PatientRepository;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
