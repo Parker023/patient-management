@@ -30,6 +30,14 @@ public class CsvExportStrategy implements ExportStrategy {
         return PatientConstants.CSV.getValue();
     }
 
+    /**
+     * Exports the provided data in CSV format using the given wrapper.
+     *
+     * @param baseExportWrapper the wrapper containing the data to be exported; must not be null or contain empty data
+     * @return a byte array representing the exported data in CSV format
+     * @throws DataNotAvailableException if the provided wrapper contains no data
+     * @throws CsvParsingException if an error occurs during CSV data processing
+     */
     @Override
     public byte[] export(BaseExportWrapper baseExportWrapper) {
         if (baseExportWrapper.getData() == null || baseExportWrapper.getData().isEmpty()) {
