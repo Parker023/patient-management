@@ -1,19 +1,19 @@
 logging:
-    level:
-        root: info
+  level:
+    root: info
 spring:
-    application:
-        name: patient-service
+  application:
+    name: patient-service
 
-    kafka:
-        producer:
-            key-serializer: org.apache.kafka.common.serialization.StringSerializer
-            value-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
-        consumer:
-            key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-            value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
+  kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
 
-    #uncomment to enable props for local testing using mysql
+  #uncomment to enable props for local testing using mysql
 #    datasource:
 #        driver-class-name: com.mysql.cj.jdbc.Driver
 #        password: Optimus@2399
@@ -31,12 +31,26 @@ spring:
 #        init:
 #            mode: always
 server:
-    port: 4000
+  port: 4000
 management:
-    endpoints:
-      web:
-        exposure:
-            include: health,info,metrics
-    endpoint:
-      health:
-          show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+resilience4j:
+  circuitbreaker:
+    instances:
+      billingCB:
+        sliding-window-type: count_based                # ✅ count/time based evaluation
+        sliding-window-size: 5                          # ✅ consider last 5 calls
+        minimum-number-of-calls: 3                      # ✅ start evaluating after 3 calls
+        failure-rate-threshold: 50                      # ✅ 50% or more failures will trip the breaker
+        wait-duration-in-open-state: 10s                # ✅ wait 10s before trying half-open
+        permitted-number-of-calls-in-half-open-state: 2 # ✅ allow 2 trial calls in half-open state
+        automatic-transition-from-open-to-half-open-enabled: true  # ✅ auto transition
+        slow-call-rate-threshold: 50                    # ✅ 50% of slow calls can trip CB
+        slow-call-duration-threshold: 3s                # ✅ calls taking longer than 3 s are "slow"
+        register-health-indicator: true                 # ✅ enables /actuator/health visibility

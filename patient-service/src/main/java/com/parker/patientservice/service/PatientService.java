@@ -1,13 +1,12 @@
 package com.parker.patientservice.service;
 
 import billing.BillingResponse;
-import com.parker.patientservice.grpc.BillingServiceGrpcClient;
-import com.parker.patientservice.kafka.KafkaProducer;
-import com.parker.patientservice.mapper.EntityDtoMapper;
 import com.parker.patientservice.dto.PatientRequestDTO;
 import com.parker.patientservice.dto.PatientResponseDTO;
 import com.parker.patientservice.exception.EmailAlreadyExistsException;
 import com.parker.patientservice.exception.PatientNotFoundException;
+import com.parker.patientservice.kafka.KafkaProducer;
+import com.parker.patientservice.mapper.EntityDtoMapper;
 import com.parker.patientservice.model.Patient;
 import com.parker.patientservice.repository.PatientRepository;
 import jakarta.persistence.EntityManager;
@@ -31,10 +30,10 @@ import java.util.UUID;
 @Slf4j
 public class PatientService {
     private final EntityDtoMapper entityDtoMapper;
-    private final BillingServiceGrpcClient billingServiceGrpcClient;
     private final PatientRepository patientRepository;
     private final KafkaProducer kafkaProducer;
     private final EntityManager entityManager;
+    private final BillingService billingService;
 
 
     /**
@@ -74,25 +73,13 @@ public class PatientService {
         generateIdAndSet(patient);
         setRegistrationDate(patient);
         entityManager.persist(patient);
-        BillingResponse billingResponse = createBillingAccount(patient);
+        BillingResponse billingResponse = billingService.createBillingAccount(patient);
         log.info("Created billing account {} ", billingResponse.toString());
         kafkaProducer.sendEvent(patient);
 
         return entityDtoMapper.toDto(patient, PatientResponseDTO.class);
     }
 
-    /**
-     * Creates a billing account for the specified patient by sending their details
-     * to the billing service.
-     *
-     * @param patient the patient object containing the ID, name, and email to be used
-     *                for creating the billing account.
-     * @return a {@link BillingResponse} object containing information about the
-     * created billing account.
-     */
-    private BillingResponse createBillingAccount(Patient patient) {
-        return billingServiceGrpcClient.createBillingAccount(patient.getId().toString(), patient.getName(), patient.getEmail());
-    }
 
     private void setRegistrationDate(Patient patient) {
         patient.setRegisteredDate(LocalDate.now());
