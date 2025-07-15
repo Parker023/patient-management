@@ -22,6 +22,14 @@ spring:
               filters:
                 - JwtValidation
 
+                # New Route for Actuator Access
+            - id: patient-service-actuator
+              uri: http://patient-service:4000
+              predicates:
+                - Path=/patient-service/actuator/**
+              filters:
+                - StripPrefix=1
+
             # Route for /api/docs/patients to patient-service /v3/api-docs
             - id: api-docs-patient-route
               uri: http://patient-service:4000
